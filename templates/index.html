@@ -2,53 +2,62 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Biblioteca</title>
+    <title>Biblioteca Virtual</title>
+    <link rel="stylesheet" href="static/style.css">
+
 </head>
 <body>
-    <h1>Lista de Livros</h1>
+    <h1>Biblioteca Virtual</h1>
 
     {% with messages = get_flashed_messages() %}
       {% if messages %}
-        <ul>
-          {% for message in messages %}
-            <li>{{ message }}</li>
-          {% endfor %}
-        </ul>
+        {% for message in messages %}
+          <p>{{ message }}</p>
+        {% endfor %}
       {% endif %}
     {% endwith %}
 
-    <a href="/adicionar_livro">Adicionar Livro</a>
+    <p><a href="/adicionar_livro">Adicionar Livro</a></p>
 
-    <table border="1" cellpadding="5" cellspacing="0">
-        <tr>
-            <th>Código</th>
-            <th>Título</th>
-            <th>Autor</th>
-            <th>Ano</th>
-            <th>Status</th>
-            <th>Ações</th>
-        </tr>
-        {% for livro in livros %}
-        <tr>
-            <td>{{ livro.codigo }}</td>
-            <td>{{ livro.titulo }}</td>
-            <td>{{ livro.autor }}</td>
-            <td>{{ livro.ano }}</td>
-            <td>
-                {% if livro.devolver_ate %}
-                    Emprestado até {{ livro.devolver_ate.strftime('%d/%m/%Y') }}
-                {% else %}
-                    Disponível
-                {% endif %}
-            </td>
-            <td>
-                <a href="/emprestar_livro/{{ livro.codigo }}">Emprestar</a> |
-                <a href="/devolver_livro/{{ livro.codigo }}">Devolver</a> |
-                <a href="/editar_livro/{{ livro.codigo }}">Editar</a> |
-                <a href="/apagar_livro/{{ livro.codigo }}">Apagar</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
+    {% if livros %}
+        <table border="1" cellpadding="5" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>Título</th>
+                    <th>Autor</th>
+                    <th>Ano</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for livro in livros %}
+                <tr>
+                    <td>{{ livro.titulo }}</td>
+                    <td>{{ livro.autor }}</td>
+                    <td>{{ livro.ano }}</td>
+                    <td>
+                        {% if livro.devolver_ate %}
+                            Emprestado até {{ livro.devolver_ate.strftime('%d/%m/%Y') }}
+                        {% else %}
+                            Disponível
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if not livro.devolver_ate %}
+                            <a href="/emprestar_livro/{{ livro.codigo }}">Emprestar</a>
+                        {% else %}
+                            <a href="/devolver_livro/{{ livro.codigo }}">Devolver</a>
+                        {% endif %}
+                        <a href="/editar_livro/{{ livro.codigo }}">Editar</a>
+                        <a href="/apagar_livro/{{ livro.codigo }}">Apagar</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>Nenhum livro cadastrado.</p>
+    {% endif %}
 </body>
 </html>

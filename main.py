@@ -34,7 +34,7 @@ def adicionar_livro():
 def emprestar_livro(codigo):
     livro = livros[codigo]
     if livro["devolver_ate"] is None:
-        livro["devolver_ate"] = date.today() + timedelta(days=7)
+        livro["devolver_ate"] = date.today() - timedelta(days=7)
         flash(f"Livro emprestado! Devolver até {livro['devolver_ate'].strftime('%d/%m/%Y')}.")
     else:
         flash("Este livro já está emprestado.")
@@ -47,8 +47,10 @@ def devolver_livro(codigo):
         hoje = date.today()
         atraso = (hoje - livro["devolver_ate"]).days
         if atraso > 0:
-            multa = 10 + atraso
-            flash(f'Livro devolvido com {atraso} dias de atraso. Multa: R${multa}')
+            multa=10
+            juros = round((10 * 0.01 * atraso),2)
+            total = multa+juros
+            flash(f'Livro devolvido com {atraso} dias de atraso. Multa: R${total}')
         else:
             flash('Livro devolvido no prazo.')
         livro["devolver_ate"] = None
